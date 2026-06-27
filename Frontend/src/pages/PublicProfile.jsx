@@ -4,13 +4,19 @@ import axios from "axios";
 
 const PublicProfile = () => {
   const { id } = useParams();
+  const [uniCode,setUniCode] = useState(null)
   const [provider, setProvider] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
   const [customerData, setCustomerData] = useState({
     name: "",
     email: "",
     time: "",
+    phoneNo: "",
+    uniqueCode: ""
   });
+  let RandomNumber = 0;
+
+  
 
   const handleBooking = async (e) => {
     e.preventDefault();
@@ -28,6 +34,11 @@ const PublicProfile = () => {
       alert("Booking failed. Please try again.");
     }
   };
+
+  useEffect(() => {
+    setUniCode(RandomNumber)
+  }, [uniCode,RandomNumber])
+  
 
   useEffect(() => {
     const fetchPublicData = async () => {
@@ -55,12 +66,20 @@ const PublicProfile = () => {
       <h2 className="text-2xl font-bold mb-4 text-center">Book {selectedService.serviceName}</h2>
       <form onSubmit={handleBooking} className="space-y-4">
         <input 
+          type="text" value={""} placeholder="Your Name" required className="w-full p-2 border rounded"
+          onChange={(e) => setCustomerData({...customerData, uniqueCode: e.target.value})}
+        />
+        <input 
           type="text" placeholder="Your Name" required className="w-full p-2 border rounded"
           onChange={(e) => setCustomerData({...customerData, name: e.target.value})}
         />
         <input 
           type="email" placeholder="Your Email" required className="w-full p-2 border rounded"
           onChange={(e) => setCustomerData({...customerData, email: e.target.value})}
+        />
+        <input 
+          type="number" placeholder="Your Phone no." required className="w-full p-2 border rounded"
+          onChange={(e) => setCustomerData({...customerData, phoneNo: e.target.value})}
         />
         <input 
           type="datetime-local" required className="w-full p-2 border rounded"
