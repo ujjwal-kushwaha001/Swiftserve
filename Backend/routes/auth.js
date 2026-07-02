@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 // const cloudinary = require('cloudinary');
 const User = require('../models/User');
 const { useReducer } = require('react');
-const { OAuth2Client } = require('google-auth-library');
 
 
 
@@ -59,7 +58,7 @@ router.post('/login', async (req, res)=>{
         const payload = {userId: user.id};
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h'});
 
-        res.json({ token, user:{id: user.id, name:user.name, email: user.email}});
+        res.json({ token, user:{id: user.id, name:user.name, email: user.email},msg: 'User login Successfully'});
     } catch (error) {
         res.status(500).send("Server Error");
     }
@@ -86,63 +85,4 @@ router.get('/AllBusinessName',async(req,res)=>{
     }
 
 })
-
-
-
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-router.post('/google', async (req, res) => {
-  const { token } = req.body;
-
-  if (!token) {
-    return res.status(400).json({ msg: "No token provided" });
-  }
-
-  try {
-    // 1. Verify the token with Google's API
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-
-    // 2. Unpack the safe profile data payload from Google
-    const { name, email, sub } = ticket.getPayload(); // 'sub' is Google's unique user ID string
-
-    // 3. Check if user already exists in your MongoDB
-    let user = await User.findOne({ email });
-
-    if (!user) {
-      // If user does not exist, seamlessly register them on the fly!
-      user = new User({
-        name: name,
-        email: email,
-        // Since they log in via Google, we can skip requiring a manual password
-        password: jwt.sign({ googleId: sub }, process.env.JWT_SECRET), // Placeholder safe value
-        services: [] // Default empty services array
-      });
-      await user.save();
-    }
-
-    // 4. Generate your own internal app JWT token so the auth middleware keeps working
-    const payload = {
-      user: user.id // Match whatever payload layout your existing 'auth' middleware expects
-    };
-
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET || 'yourFallbackSecret', // Make sure this matches your .env secret
-      { expiresIn: '5d' },
-      (err, appToken) => {
-        if (err) throw err;
-        // Send our secure internal app token right back to the frontend
-        res.json({ token: appToken });
-      }
-    );
-
-  } catch (err) {
-    console.error("Google token verification failed:", err.message);
-    res.status(401).json({ msg: "Invalid Google token, authentication denied." });
-  }
-});
-
 module.exports = router

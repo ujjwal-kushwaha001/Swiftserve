@@ -4,7 +4,7 @@ import axios from "axios";
 
 const PublicProfile = () => {
   const { id } = useParams();
-  const [uniCode,setUniCode] = useState(null)
+  const [uniCode,setUniCode] = useState(0)
   const [provider, setProvider] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
   const [customerData, setCustomerData] = useState({
@@ -12,7 +12,7 @@ const PublicProfile = () => {
     email: "",
     time: "",
     phoneNo: "",
-    uniqueCode: ""
+    uniqueCode: null
   });
   let RandomNumber = 0;
 
@@ -27,6 +27,7 @@ const PublicProfile = () => {
         customerEmail: customerData.email,
         appointmentTime: customerData.time,
         serviceName: selectedService.serviceName,
+        uniqueCode:customerData.uniqueCode
       });
       alert("Appointment Booked! The provider will see it on their dashboard.");
       setSelectedService(null); // Close the form
@@ -34,11 +35,6 @@ const PublicProfile = () => {
       alert("Booking failed. Please try again.");
     }
   };
-
-  useEffect(() => {
-    setUniCode(RandomNumber)
-  }, [uniCode,RandomNumber])
-  
 
   useEffect(() => {
     const fetchPublicData = async () => {
@@ -54,6 +50,12 @@ const PublicProfile = () => {
     fetchPublicData();
   }, [id]);
 
+  useEffect(() => {
+    RandomNumber = Math.floor(Math.random() * 9000) + 1000;
+    setCustomerData({...customerData, uniqueCode: RandomNumber});
+  }, [])
+
+  
   if (!provider)
     return <div className="text-center mt-20">Loading profile...</div>;
 
@@ -66,11 +68,10 @@ const PublicProfile = () => {
       <h2 className="text-2xl font-bold mb-4 text-center">Book {selectedService.serviceName}</h2>
       <form onSubmit={handleBooking} className="space-y-4">
         <input 
-          type="text" value={""} placeholder="Your Name" required className="w-full p-2 border rounded"
-          onChange={(e) => setCustomerData({...customerData, uniqueCode: e.target.value})}
+          type="text" value={customerData.uniqueCode} placeholder="" className="w-full p-2 border rounded" disabled
         />
-        <input 
-          type="text" placeholder="Your Name" required className="w-full p-2 border rounded"
+         <input 
+          type="text"  placeholder="Your Name" required className="w-full p-2 border rounded"
           onChange={(e) => setCustomerData({...customerData, name: e.target.value})}
         />
         <input 
@@ -78,7 +79,7 @@ const PublicProfile = () => {
           onChange={(e) => setCustomerData({...customerData, email: e.target.value})}
         />
         <input 
-          type="number" placeholder="Your Phone no." required className="w-full p-2 border rounded"
+          type="number" placeholder="Your Phone no. (10 digit)" maxLength={10} required className="w-full p-2 border rounded"
           onChange={(e) => setCustomerData({...customerData, phoneNo: e.target.value})}
         />
         <input 

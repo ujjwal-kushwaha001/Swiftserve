@@ -150,6 +150,7 @@ const Dashboard = () => {
             <th className="py-2">Customer</th>
             <th className="py-2">Service</th>
             <th className="py-2">Time</th>
+            <th className="py-2">Unique Code</th>
           </tr>
         </thead>
         <tbody>
@@ -160,6 +161,7 @@ const Dashboard = () => {
               <td className="py-3 text-sm text-blue-500">
                 {new Date(b.appointmentTime).toLocaleString()}
               </td>
+              <td className="py-3 text-gray-600">{b.uniqueCode}</td>
             </tr>
           ))}
         </tbody>

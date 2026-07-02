@@ -61,14 +61,15 @@ router.get('/public/:id', async (req, res) => {
 // @access  Public
 router.post('/book', async (req, res) => {
   try {
-    const { providerId, customerName, customerEmail, appointmentTime, serviceName } = req.body;
+    const { providerId, customerName, customerEmail, appointmentTime, serviceName,uniqueCode } = req.body;
 
     const newBooking = new Booking({
       providerId,
       customerName,
       customerEmail,
       appointmentTime,
-      serviceName // We'll add this to the schema to track what they booked
+      serviceName,
+      uniqueCode  // We'll add this to the schema to track what they booked
     });
 
     await newBooking.save();
