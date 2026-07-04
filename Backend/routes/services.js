@@ -1,8 +1,11 @@
+const  customParseFormat = require('dayjs/plugin/customParseFormat');
 const express = require('express');
 const router = express.Router();
 const auth = require('../middlewares/authMiddleware');
 const User = require('../models/User');
 const Booking = require('../models/Booking');
+const dayjs = require('dayjs');
+dayjs.extend(customParseFormat);
 
 // @route   POST api/services
 // @desc    Add a service to provider profile
@@ -62,21 +65,22 @@ router.get('/public/:id', async (req, res) => {
 router.post('/book', async (req, res) => {
   try {
     const { providerId, customerName, customerEmail, appointmentTime, serviceName,uniqueCode } = req.body;
-
-    const newBooking = new Booking({
-      providerId,
-      customerName,
-      customerEmail,
-      appointmentTime,
-      serviceName,
-      uniqueCode  // We'll add this to the schema to track what they booked
+    
+      const newBooking = new Booking({
+      providerId: providerId,
+      customerName: customerName,
+      customerEmail: customerEmail,
+      appointmentTime: appointmentTime,
+      serviceName: serviceName,
+      uniqueCode: uniqueCode  // We'll add this to the schema to track what they booked
     });
 
     await newBooking.save();
     res.json({ msg: "Booking successful!" });
+    
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server Error');
+    res.status(500).json({ error: err.message });
   }
 });
 

@@ -21,7 +21,7 @@ const PublicProfile = () => {
   const handleBooking = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:4999/api/services/book", {
+      const res = await axios.post("http://localhost:4999/api/services/book", {
         providerId: id,
         customerName: customerData.name,
         customerEmail: customerData.email,
