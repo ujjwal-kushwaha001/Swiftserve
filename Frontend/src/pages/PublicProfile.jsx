@@ -78,7 +78,6 @@ const PublicProfile = () => {
       }
 
 
-
   useEffect(() => {
     
     fetchPublicData();
