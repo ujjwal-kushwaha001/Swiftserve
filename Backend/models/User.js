@@ -11,7 +11,8 @@ const UserSchema = new mongoose.Schema({
         {
             serviceName: String,
             price: Number,
-            duration: Number,  // in Minutes
+            duration: Number,
+            slots: [{ type: String }]  // in Minutes
         }
     ]
 }, {timestamps: true});

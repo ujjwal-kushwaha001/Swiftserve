@@ -60,7 +60,7 @@ const AllServices = () => {
         {/* Services Grid */}
         {filteredServices.length === 0 ? (
           <p className="text-center text-gray-500 text-lg mt-10">
-            No services found matching your search.
+            No services found Right Now.
           </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

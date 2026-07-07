@@ -13,12 +13,12 @@ dayjs.extend(customParseFormat);
 router.post('/',auth, async (req, res)=>{
 
     try {
-        const { serviceName, price, duration } = req.body;
+        const { serviceName, price, duration, slots } = req.body;
     
     // Find the user by the ID we stored in the middleware (req.user)
     const user = await User.findById(req.user);
 
-    const newService = { serviceName, price, duration };
+    const newService = { serviceName, price, duration, slots: Array.isArray(slots) ? slots : [] };
     user.services.push(newService);
 
     await user.save();
@@ -58,21 +58,39 @@ router.get('/public/:id', async (req, res) => {
   }
 });
 
+router.get('/AlreadyBookings', async (req, res) => {
+   try {
+    const { providerId } = req.query;
+    const bookings = await Booking.find({providerId: providerId}).select('selectedSlots');
+    if (!bookings) return res.status(404).json({ msg: "Bookings not found" });
+
+    const bookedSlotsArray = bookings.map(b => b.selectedSlots);
+    res.json(bookedSlotsArray);
+    console.log(bookedSlotsArray);
+    
+  } catch (err) {
+    res.status(500).send('Server Error');
+  }
+});
+
+
+
 
 // @route   POST api/services/book
 // @desc    Create a new booking
 // @access  Public
 router.post('/book', async (req, res) => {
   try {
-    const { providerId, customerName, customerEmail, appointmentTime, serviceName,uniqueCode } = req.body;
+    const { providerId, customerName, customerEmail, serviceName,uniqueCode,phoneNo, selectedSlots} = req.body;
     
       const newBooking = new Booking({
       providerId: providerId,
       customerName: customerName,
       customerEmail: customerEmail,
-      appointmentTime: appointmentTime,
       serviceName: serviceName,
-      uniqueCode: uniqueCode  // We'll add this to the schema to track what they booked
+      uniqueCode: uniqueCode,
+      phoneNumber: phoneNo,
+      selectedSlots: selectedSlots // We'll add this to the schema to track what they booked
     });
 
     await newBooking.save();
@@ -92,7 +110,7 @@ router.post('/book', async (req, res) => {
 router.get('/my-bookings', auth, async (req, res) => {
   try {
     // Look for bookings where providerId matches the logged-in user's ID
-    const bookings = await Booking.find({ providerId: req.user }).sort({ appointmentTime: 1 });
+    const bookings = await Booking.find({ providerId: req.user }).sort({ selectedSlots : 1 });
     res.json(bookings);
   } catch (err) {
     res.status(500).send('Server Error');
