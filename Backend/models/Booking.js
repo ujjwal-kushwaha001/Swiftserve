@@ -8,6 +8,7 @@ const BookingSchema = new mongoose.Schema({
   status: { type: String, default: 'Pending' },
   uniqueCode: {type: Number, required: true},
   phoneNumber: {type: String},
-  selectedSlots: {type: String}
+  appointmentTime: {type: String},
+  appointmentDate: {type: String}
 }, { timestamps: true });
 module.exports = mongoose.model('Booking', BookingSchema);

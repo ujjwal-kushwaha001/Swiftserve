@@ -7,32 +7,13 @@ import { UserStar } from 'lucide-react';
 const Dashboard = () => {
   const [services, setServices] = useState([]);
   const [providerId, setProviderId] = useState('');
-  const [newService, setNewService] = useState({ serviceName: '', price: '', duration: '', slots:[], currentSlot: '' });
+  const [newService, setNewService] = useState({ serviceName: '', price: '', duration: '', currentSlot: '' });
   const [bookings, setBookings] = useState([]);
 
   // const bookingUrl = `${window.location.origin}/book/${}`;
   const navigate = useNavigate();
 
 
-  const handleAddSlot = (e) => {
-  const trimmedSlot = newService.currentSlot.split(",");
-
-  if (trimmedSlot !== "" && !newService.slots.includes(trimmedSlot)) {
-    setNewService({
-      ...newService,
-      slots: trimmedSlot,
-      currentSlot: "" // 👈 CRITICAL: Clear out the input string here!
-    });
-    
-  }
-};
-
-const handleRemoveSlot = (indexToRemove) => {
-  setNewService({
-    ...newService,
-    slots: newService.slots.filter((_, index) => index !== indexToRemove)
-  });
-};
 
 
   // 1. Function to fetch data from backend
@@ -93,7 +74,7 @@ const handleRemoveSlot = (indexToRemove) => {
         headers: { 'x-auth-token': token }
       });
       setServices(res.data); // Update the list with the new data from server
-      setNewService({ serviceName: '', price: '', duration: '', slots: [], currentSlot: '' }); // Clear the form
+      setNewService({ serviceName: '', price: '', duration: '', currentSlot: '' }); // Clear the form
       alert("Service added successfully!");
     } catch (err) {
       console.log(err.response.data); // This will print the actual error to your console
@@ -133,43 +114,6 @@ const handleRemoveSlot = (indexToRemove) => {
           />
         </div>
 
-        {/* Dynamic Slot Input */}
-    <div>
-      <label className="block text-sm font-semibold text-gray-700 mb-1">Add Available Slots</label>
-      <div className="flex gap-2">
-        <input 
-          type="text" 
-          placeholder="e.g., 10:00 AM, 11:00 AM, 12:00 PM" 
-          value={newService.currentSlot}
-          onChange={(e) => setNewService({...newService, currentSlot:e.target.value})}
-          className="flex-1 p-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-
-        <button 
-          onClick={handleAddSlot}
-          className="bg-gray-900 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-800"
-        >
-          Add
-        </button>
-      </div>
-
-      {/* Badges displaying added slots */}
-      <div className="flex flex-wrap gap-2 mt-3">
-        {newService.slots.map((slot, index) => (
-          <span key={index} className="flex items-center gap-1 bg-blue-50 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
-            {slot}
-            <button 
-              type="button" 
-              onClick={() => handleRemoveSlot(index)}
-              className="text-red-500 font-bold ml-1 hover:text-red-700"
-            >
-              ×
-            </button>
-          </span>
-        ))}
-      </div>
-    </div>
-
        <button type="submit" className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Add Service</button>
       </form>
 
@@ -180,7 +124,7 @@ const handleRemoveSlot = (indexToRemove) => {
           <div key={index} className="bg-white p-4 rounded shadow border-l-4 border-blue-500 flex justify-between">
             <div>
               <h3 className="font-bold text-lg">{s.serviceName}</h3>
-              <p className="text-gray-600">{s.duration} mins</p>
+              <p className="text-gray-600">{s.duration} Min</p>
             </div>
             <div className="text-xl font-bold text-blue-600">₹{s.price}</div>
 
@@ -220,7 +164,7 @@ const handleRemoveSlot = (indexToRemove) => {
               <td className="py-3 font-medium">{b.customerName}</td>
               <td className="py-3 text-gray-600">{b.serviceName}</td>
               <td className="py-3 text-sm text-blue-500">
-                {new Date(b.appointmentTime).toLocaleString()}
+                {`${b.appointmentTime}  ${b.appointmentDate}`}
               </td>
               <td className="py-3 text-gray-600">{b.uniqueCode}</td>
             </tr>

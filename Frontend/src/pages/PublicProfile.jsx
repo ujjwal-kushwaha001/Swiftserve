@@ -14,7 +14,8 @@ const PublicProfile = () => {
     time: "",
     phoneNo: "",
     uniqueCode: null,
-    selectedSlots: ''
+    appointmentDate: '',
+    appointmentTime: ''
   });
   let RandomNumber = 0;
 
@@ -32,11 +33,11 @@ const PublicProfile = () => {
         providerId: id,
         customerName: customerData.name,
         customerEmail: customerData.email,
-        appointmentTime: customerData.time,
+        appointmentTime: customerData.appointmentTime,
+        appointmentDate: customerData.appointmentDate,
         serviceName: selectedService.serviceName,
         uniqueCode:customerData.uniqueCode,
-        phoneNo:customerData.phoneNo,
-        selectedSlots:customerData.selectedSlots
+        phoneNo:customerData.phoneNo
       });
       alert("Appointment Booked! The provider will see it on their dashboard.");
       setSelectedService(null); // Close the form
@@ -77,6 +78,13 @@ const PublicProfile = () => {
         }
       }
 
+  const formatDateToDDMMYYYY = (dateString) => {
+  if (!dateString) return '';
+  // Native date inputs return 'YYYY-MM-DD'
+  const [year, month, day] = dateString.split('-'); 
+  return `${day}-${month}-${year}`;
+};
+
 
   useEffect(() => {
     
@@ -93,6 +101,8 @@ const PublicProfile = () => {
     setCustomerData({...customerData, uniqueCode: RandomNumber});
 
   }, [])
+
+
   
   
   if (!provider)
@@ -113,6 +123,7 @@ const PublicProfile = () => {
           type="text"  placeholder="Your Name" required className="w-full p-2 border rounded"
           onChange={(e) => setCustomerData({...customerData, name: e.target.value})}
         />
+
         <input 
           type="email" placeholder="Your Email" required className="w-full p-2 border rounded"
           onChange={(e) => setCustomerData({...customerData, email: e.target.value})}
@@ -121,38 +132,16 @@ const PublicProfile = () => {
           type="number" placeholder="Your Phone no. (10 digit)" maxLength={10} required className="w-full p-2 border rounded"
           onChange={(e) => setCustomerData({...customerData, phoneNo: e.target.value})}
         />
+        <input 
+          type="date" placeholder="Book Date" className="w-full p-2 border rounded"
+          onChange={(e) => setCustomerData({...customerData, appointmentDate: e.target.value})}
+        />
 
+         <input 
+          type="time" placeholder="Book Date" className="w-full p-2 border rounded"
+          onChange={(e) => setCustomerData({...customerData, appointmentTime: e.target.value})}
+        />
 
-        <div className="mb-4">
-      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Select an Available Slot</label>
-      
-      {selectedService.slots && selectedService.slots.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
-            {selectedService.slots.map((slot, index) =>{
-
-              const isBooked = bookings && bookings.includes(slot);
-               
-            return ( 
-            <button
-            
-            disabled={isBooked}
-              key={index}
-              type="button"
-              onClick={() => setCustomerData({...customerData,selectedSlots:slot})}
-              className={`px-4 py-2 rounded-xl text-sm font-medium border cursor-pointer transition ${
-              isBooked? 'line-through bg-gray-200' : customerData.selectedSlots === slot ? 'bg-blue-600 border-blue-600 text-white shadow-sm' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-400'
-              }`}
-            >
-              {isBooked?'Already Booked':''}
-              {slot}
-            </button>
-
-            ); })}
-        </div>
-      ) : (
-        <p className="text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded-xl inline-block">Contact business for availability settings.</p>
-      )}
-    </div>
 
         <div className="flex gap-2">
           <button type="submit" className="flex-1 bg-green-600 text-white p-2 rounded-lg">Confirm Booking</button>
