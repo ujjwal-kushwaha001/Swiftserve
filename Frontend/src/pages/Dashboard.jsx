@@ -87,6 +87,19 @@ const Dashboard = () => {
     navigate('/login');
   };
 
+  const deleteService = async(serviceName, duration, Price)=>{
+    try {
+      const res = await axios.post('http://localhost:4999/api/services/deleteService', {serviceName, duration, Price, providerId}, {
+        method: 'DELETE',
+      });
+      setServices(res.data);
+      alert("Service Deleted successfully!");
+    } catch (error) {
+      console.log(error); 
+    }
+
+  }
+
 
 
   return (
@@ -121,7 +134,7 @@ const Dashboard = () => {
       <div className="grid gap-4">
         {services.map((s, index) => (
           
-          <div key={index} className="bg-white p-4 rounded shadow border-l-4 border-blue-500 flex justify-between">
+          <div key={index} className="bg-white border p-4 rounded shadow border-l-4 border-blue-500 flex justify-between">
             <div>
               <h3 className="font-bold text-lg">{s.serviceName}</h3>
               <p className="text-gray-600">{s.duration} Min</p>
@@ -139,6 +152,19 @@ const Dashboard = () => {
         />
         <span className="text-[10px] font-semibold text-gray-500 mt-1 uppercase tracking-wider">Scan to Book</span>
       </div>
+      <div className=" flex flex-col  gap-3">
+
+        <div onClick={()=>deleteService(s.serviceName, s.duration, s.price)} className="cancel-boc flex items-center justify-between gap-2 px-3 cursor-pointer hover:bg-red-950  bg-yellow-800 text-amber-50 rounded-full">
+        <p>Delete Service</p>
+        <i className="fa-solid fa-x"></i>
+      </div>
+      <div className="cancel-boc flex items-center justify-between gap-2 px-3  bg-indigo-950 text-amber-50 rounded-full cursor-pointer">
+        <p>Edit Service</p>
+        <i class="fa-solid fa-pen-to-square"></i>
+      </div>
+
+      </div>
+     
 
           </div>
         ))}

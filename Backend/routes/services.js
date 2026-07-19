@@ -118,7 +118,19 @@ router.get('/my-bookings', auth, async (req, res) => {
   }
 });
 
-
+router.post('/deleteService', async (req, res)=>{
+  try {
+    const {serviceName, duration, Price, providerId} = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      providerId,
+      { $pull: { services: { serviceName: serviceName } } },
+      { new: true } // This option returns the updated document
+    );
+    res.json(updatedUser.services);
+  } catch (error) {
+    res.status(500).send('Server Error');
+  }
+});
 
 
 router.get('/all', async (req, res) => {
