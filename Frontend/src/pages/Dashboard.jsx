@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { UserStar } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 const Dashboard = () => {
   const [services, setServices] = useState([]);
@@ -107,7 +108,7 @@ const Dashboard = () => {
       <div className="flex justify-between items-center mb-8">
         
         <h1 className="text-3xl font-bold text-gray-800">Your Services</h1>
-        <button onClick={() => { localStorage.removeItem('token'); navigate('/login'); }} className="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+        <button onClick={() => { localStorage.removeItem('token'); navigate('/login'); toast.error("Logout successfully") }} className="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
       </div>
 
       {/* Form */}
